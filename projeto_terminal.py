@@ -42,6 +42,92 @@ def listar_pacientes():
         print(f"{i}. {p['nome']} - {p['procedimento']} - Status: {p['status']}")
 
 
+def gerenciar_producao_farmaceutica():
+    if not pacientes:
+        print("Nenhum paciente cadastrado para associar a uma produção.")
+        return
+
+    listar_pacientes()
+    try:
+        escolha = int(input("\nEscolha o número do paciente para gerenciar a produção: ")) - 1
+        if escolha < 0 or escolha >= len(pacientes):
+            print("Opção inválida.")
+            return
+    except ValueError:
+        print("Entrada inválida.")
+        return
+
+    paciente = pacientes[escolha]
+    print(f"\nGerenciando Produção Farmacêutica para {paciente['nome']}")
+
+    if "medicamentos" not in paciente:
+        paciente["medicamentos"] = []
+
+    while True:
+        print("\n1. Solicitar Novo Medicamento")
+        print("2. Atualizar Status de Produção")
+        print("3. Ver Medicamentos do Paciente")
+        print("4. Voltar ao Menu Principal")
+
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            nome_medicamento = input("Nome do medicamento: ").strip()
+            lote = input("Lote de produção: ").strip()
+            novo_medicamento = {
+                "nome": nome_medicamento,
+                "lote": lote,
+                "status": "Solicitado" 
+            }
+            paciente["medicamentos"].append(novo_medicamento)
+            print(f"✅ Medicamento '{nome_medicamento}' (Lote: {lote}) solicitado com sucesso.")
+
+        elif opcao == "2":
+            if not paciente["medicamentos"]:
+                print("Nenhum medicamento solicitado para este paciente.")
+                continue
+
+            print("\nSelecione o medicamento para atualizar o status:")
+            for i, med in enumerate(paciente["medicamentos"], start=1):
+                print(f"{i}. {med['nome']} (Lote: {med['lote']}) - Status atual: {med['status']}")
+
+            try:
+                m_index = int(input("Escolha o número do medicamento: ")) - 1
+                if not (0 <= m_index < len(paciente["medicamentos"])):
+                    print("Opção inválida.")
+                    continue
+
+                print("\nSelecione o novo status:")
+                status_disponiveis = ["Em produção", "Controle de Qualidade", "Disponível", "Administrado"]
+                for i, status in enumerate(status_disponiveis, start=1):
+                    print(f"{i}. {status}")
+
+                s_index = int(input("Escolha o número do novo status: ")) - 1
+                if 0 <= s_index < len(status_disponiveis):
+                    paciente["medicamentos"][m_index]["status"] = status_disponiveis[s_index]
+                    print("✅ Status atualizado com sucesso!")
+                else:
+                    print("Opção de status inválida.")
+
+            except ValueError:
+                print("Entrada inválida.")
+
+        elif opcao == "3":
+            if not paciente["medicamentos"]:
+                print("\nNenhum medicamento associado a este paciente.")
+            else:
+                print(f"\n--- Medicamentos de {paciente['nome']} ---")
+                for med in paciente["medicamentos"]:
+                    print(f"- Nome: {med['nome']} | Lote: {med['lote']} | Status: {med['status']}")
+
+        elif opcao == "4":
+            break
+        else:
+            print("Opção inválida.")
+    
+        
+
+
 # Gerenciar estudo clínico (adicionar testes e concluir)
 def gerenciar_estudo():
     if not pacientes:
@@ -155,6 +241,8 @@ while True:
             listar_pacientes()
         elif opcao == 2:
             gerenciar_estudo()
+        elif opcao == 3:  
+           gerenciar_producao_farmaceutica()
         elif opcao == 4:
             analisar_dados_clinicos()
         elif opcao == 5:
