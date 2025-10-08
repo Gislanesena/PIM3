@@ -1,3 +1,26 @@
+usuarios_autorizados = [
+    {"login": "admin", "senha": "123"},
+]
+
+
+def fazer_login():
+    # Controla o acesso ao sistema. Pede um login e senha e verifica
+
+    print("\n--- Acesso ao Sistema ---")
+    while True:
+        login = input("Login: ").strip()
+        senha = input("Senha: ").strip()
+
+        # Verifica se a combinação de login e senha existe na lista
+        for usuario in usuarios_autorizados:
+            if usuario["login"] == login and usuario["senha"] == senha:
+                print(f"\n Login bem-sucedido! Bem-vindo(a), {login}.")
+                return True  # Retorna True para indicar sucesso
+
+     
+        print(" Login ou senha incorretos. Tente novamente.")
+
+
 def exibir_menu():
     print("\nAnálise Clínica:")
     print("1. Listar Pacientes")
@@ -231,6 +254,8 @@ def testes():
             print(f"  Observação: {t['observacao']}")
 
 
+
+fazer_login()
 # Programa principal
 while True:
     exibir_menu()
